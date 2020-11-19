@@ -1,16 +1,4 @@
 <?php
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 Route::get('/','MicropostsController@index');
 
 Route::get('signup','Auth\RegisterController@showRegistrationForm')->name('signup.get');
@@ -26,8 +14,15 @@ Route::group(['middleware'=> ['auth']],function() {
             Route::delete('unfollow','UserFollowController@destroy')->name('user.unfollow');
             Route::get('followings','UsersController@followings')->name('users.followings');
             Route::get('followers','UsersController@followers')->name('users.followers');
+            Route::get('favorites', 'UsersController@favorites')->name('users.favorites');
+        });  
+        Route::resource('users','UsersController',['only'=>['index','show']]);
+        
+        Route::group(['prefix' => 'microposts/{id}'], function () {
+            Route::post('favorite', 'FavoritesController@store')->name('favorites.favorite');
+            Route::delete('unfavorite', 'FavoritesController@destroy')->name('favorites.unfavorite');
         });
-    Route::resource('users','UsersController',['only'=>['index','show']]);
-    Route::resource('microposts','MicropostsController',['only'=>['store','destroy']]);
-
+        Route::resource('microposts','MicropostsController',['only'=>['store','destroy']]);
 });
+        
+        
